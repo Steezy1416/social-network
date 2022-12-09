@@ -62,7 +62,7 @@ const userController = {
             }
             else if(userData.thoughts){
                 userData.thoughts.forEach(thought => {
-                    Thought.findOneAndDelete({_id: thought})
+                    return Thought.findOneAndDelete({_id: thought})
                 })
             }
 
