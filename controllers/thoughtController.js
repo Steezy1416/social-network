@@ -1,7 +1,7 @@
 const { User, Thought } = require("../models")
 
 const thougthController = {
-    //get all thoughts
+    //get all thoughts works
     getThougths(req, res) {
         Thought.find({})
             .then(thoughtData => {
@@ -10,7 +10,7 @@ const thougthController = {
             })
             .catch(err => res.json(err))
     },
-    //get a thought by id
+    //get a thought by id works
     getThougthById(req, res) {
         Thought.findOne({ _id: req.params.thoughtId })
             .then(thoughtData => {
@@ -22,7 +22,7 @@ const thougthController = {
             })
             .catch(err => res.json(err))
     },
-    //create a new thought
+    //create a new thought works
     createThougth(req, res) {
         let tData
         User.findOne({ username: req.body.username })
@@ -47,7 +47,7 @@ const thougthController = {
             })
             .catch(err => res.json(err))
     },
-    //update thought
+    //update thought works
     updateThought(req, res) {
         Thought.findOneAndUpdate(
             { _id: req.params.thoughtId },
@@ -63,7 +63,7 @@ const thougthController = {
             })
             .catch(err => res.json(err))
     },
-    //delete a thought
+    //delete a thought works
     deleteThought(req, res) {
         Thought.findOneAndDelete({ _id: req.params.thoughtId })
             .then(thougthData => {
@@ -72,13 +72,20 @@ const thougthController = {
                     res.status(404).json("No thought found")
                     return
                 }
-                res.json(thougthData)
+                User.findOneAndUpdate(
+                    {username: thougthData.username},
+                    {$pull: {thoughts: thougthData._id}},
+                    {new: true}
+                )
+                .then(() => {
+                    res.json(thougthData)
+                })
             })
             .catch(err => res.json(err))
     },
-    //create a new reaction
+    //create a new reaction works
     addReaction(req, res) {
-        console.log(req)
+        console.log(req.body)
         User.findOne({ username: req.body.username })
             .then(userData => {
                 if (!userData) {
@@ -87,7 +94,7 @@ const thougthController = {
                 }
                 Thought.findOneAndUpdate(
                     { _id: req.params.thoughtId },
-                    { $push: { reactions: req.body.reactionId } },
+                    { $push: { reactions: req.body } },
                     { new: true }
                 )
                     .then(thougthData => {
@@ -103,11 +110,11 @@ const thougthController = {
             .catch(err => res.json(err))
 
     },
-    //removes a reaction
+    //removes a reaction works
     removeReaction(req, res) {
-        Thought.findOneAndDelete(
+        Thought.findOneAndUpdate(
             { _id: req.params.thoughtId },
-            { $pull: { reactions: { reactionId: req.params.reactionId } } },
+            { $pull: { reactions: {reactionId: req.params.reactionId} } },
             { new: true }
         )
             .then(thougthData => {

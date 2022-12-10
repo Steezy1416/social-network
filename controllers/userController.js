@@ -2,7 +2,7 @@ const { trusted } = require("mongoose")
 const {User, Thought} = require("../models")
 
 const userController = {
-    //get all users
+    //get all users works
     getUsers(req, res){
         User.find({})
         .then(userData => {
@@ -11,7 +11,7 @@ const userController = {
         })
         .catch(err => res.json(err))
     },
-    //get a user by id
+    //get a user by id works
     getUserById(req, res){
         User.findOne({_id: req.params.userId})
         .then(userData => {
@@ -24,7 +24,7 @@ const userController = {
         })
         .catch(err => res.json(err))
     },
-    //create a new user
+    //create a new user works
     createUser(req, res){
         User.create(req.body)
         .then(userData => {
@@ -33,7 +33,7 @@ const userController = {
         })
         .catch(err => res.json(err))
     },
-    //update a user
+    //update a user wroks
     updateUser(req, res){
         User.findOneAndUpdate(
             {_id: req.params.userId},
@@ -50,7 +50,7 @@ const userController = {
         })
         .catch(err => res.json(err))
     },
-    //delete a user
+    //delete a user works works
     deleteUser(req, res){
         User.findOneAndDelete({_id: req.params.userId})
         .then(userData => {
@@ -60,17 +60,21 @@ const userController = {
                 res.status(404).jsom({message: "User not found"})
                 return
             }
-            else if(userData.thoughts){
-                userData.thoughts.forEach(thought => {
-                    return Thought.findOneAndDelete({_id: thought})
+            if(userData.thoughts){
+                console.log("the user has thoughts wow")
+                return Thought.deleteMany({username: userData.username})
+                .then(() => {
+                    res.json(userData)
                 })
             }
+            else {
+                res.json(userData)
+            }
 
-            res.json(userData)
         })
         .catch(err => res.json(err))
     },
-    //add a friend
+    //add a friend works
     addFriend(req, res){
         User.findOneAndUpdate(
             {_id: req.params.userId},
@@ -87,7 +91,7 @@ const userController = {
         })
         .catch(err => res.json(err))
     },
-    //remove a friend
+    //remove a friend works
     removeFriend(req, res){
         User.findOneAndUpdate(
             {_id: req.params.userId},
