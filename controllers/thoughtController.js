@@ -26,6 +26,7 @@ const thougthController = {
     createThougth(req, res) {
         let tData
         User.findOne({ username: req.body.username })
+            // if there is no valid user with the username return
             .then(userData => {
                 if (!userData) {
                     res.status(404).json({ message: "No user found" })
@@ -34,6 +35,7 @@ const thougthController = {
                 Thought.create(req.body)
                     .then(thoughtData => {
                         tData = thoughtData
+                        //push the thought to thoughts array in user
                         return User.findOneAndUpdate(
                             { username: thoughtData.username },
                             { $push: { thoughts: tData._id } },
@@ -87,6 +89,7 @@ const thougthController = {
     addReaction(req, res) {
         console.log(req.body)
         User.findOne({ username: req.body.username })
+        //checks that there is a valid user
             .then(userData => {
                 if (!userData) {
                     res.status(404).json({ message: "User not found" })
